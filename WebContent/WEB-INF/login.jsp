@@ -21,7 +21,10 @@
 <div class="w3layouts-main">
 	<h2>Se connecter</h2>
 		<form action="Login" method="post">
-			<input type="email" value="<c:out value="${ utilisateur.email }"/>" 
+			<input type="email" value="<c:choose>
+			<c:when test="${ !empty email }">${ email }</c:when>
+			<c:otherwise>${ utilisateur.email }</c:otherwise>
+			</c:choose>" 
 			class="ggg" name="email" placeholder="E-MAIL" required>
 			<c:if test="${ !empty form.erreurs.email }">
 			<span class="erreur">${ form.erreurs.email }</span>

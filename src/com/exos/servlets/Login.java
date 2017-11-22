@@ -3,6 +3,7 @@ package com.exos.servlets;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,14 @@ public class Login extends HttpServlet {
 		
 		if(session.getAttribute("utilisateur")==null)
 		{
+			  Cookie[] cookies = request.getCookies();
+		        if (cookies != null) {
+		            for (Cookie cookie : cookies) {
+		                if (cookie.getName().equals("email")) {
+		                    request.setAttribute("email", cookie.getValue());
+		                }
+		            }
+		        }
 			this.getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
 		}
 		else
@@ -54,7 +63,6 @@ public class Login extends HttpServlet {
 		
 		Utilisateur utilisateur=form.connexion(request);
 		
-		HttpSession session=request.getSession();
 		
 		
 		if(!form.getErreurs().isEmpty())
@@ -65,6 +73,11 @@ public class Login extends HttpServlet {
 		}
 		else
 		{
+			
+		 	Cookie cookiee=new Cookie("email",utilisateur.getEmail());
+	        	cookiee.setMaxAge(3600*24*30);
+	        	response.addCookie(cookiee);
+	    		HttpSession session=request.getSession();
 			session.setAttribute("utilisateur", utilisateur);
 			response.sendRedirect(request.getContextPath() + "/Accueil");
 		}
