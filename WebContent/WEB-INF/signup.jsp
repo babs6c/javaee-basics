@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-<title>Login</title>
+<title>Inscription</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- bootstrap-css -->
@@ -18,33 +18,29 @@
 <script src="js/jquery2.0.3.min.js"></script>
 </head>
 <body>
-<div class="log-w3">
+<div class="reg-w3">
 <div class="w3layouts-main">
-	<h2>Se connecter</h2>
-		<form action="Login" method="post">
-			<input type="email" value="<c:choose>
-			<c:when test="${ !empty email }">${ email }</c:when>
-			<c:otherwise>${ utilisateur.email }</c:otherwise>
-			</c:choose>" 
-			class="ggg" name="email" placeholder="E-MAIL" required>
-			<c:if test="${ !empty form.erreurs.email }">
-			<span class="erreur">${ form.erreurs.email }</span>
-			</c:if>
-			<input type="password" class="ggg" name="pass" placeholder="MOT DE PASSE" required>
-			<c:if test="${ !empty form.erreurs.pass }">
-			<span class="erreur">${ form.erreurs.pass }</span>
-			</c:if>
-			<!-- <span><input type="checkbox" />Remember Me</span>
-			<h6><a href="#">Forgot Password?</a></h6> -->
+	<h2>Inscription</h2>
+		<form action="Inscription" method="post" enctype="multipart/form-data">
+			<!--  
+			<input type="text" class="ggg" name="nom" placeholder="NOM" required="">
+			<input type="email" class="ggg" name="email" placeholder="E-MAIL" required="">
+			<input type="password" class="ggg" name="pass" placeholder="MOT DE PASSE" required="">
+			-->
+			<label style="font-weight:normal !important;text-align:left;color:#f1aea2;" for="agree">
+			Photo</label>
+			<input type="file" class="ggg" name="photo" required="">
+			<!-- 
+			<br><br>
+			<h4><input type="checkbox" name="agree" id="agree"/>
+			<label style="font-weight:normal !important;position: relative;bottom: 15px;left:25px" for="agree">
+			J'accepte les conditions d'utilisation et la politique de confidentialité
+			</label></h4>
+			-->
 				<div class="clearfix"></div>
-				<input type="submit" value="Connexion" name="login">
-				<c:if test="${ !empty form.erreurs.credentials }">
-				<span class="erreur" style="text-align:center;">${ form.erreurs.credentials }</span>
-				</c:if>
+				<input type="submit" value="S'inscrire">
 		</form>
-		
-		<p>Pas encore inscrit ?<a href="<c:url value="/Inscription"/>">
-		Créer un compte</a></p>
+		<p>Déjà inscrit?<a href="<c:url value="/Login"/>">Se connecter</a></p>
 </div>
 </div>
 <script src="js/bootstrap.js"></script>
