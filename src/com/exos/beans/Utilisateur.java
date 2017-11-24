@@ -5,6 +5,7 @@ public class Utilisateur{
 	private String email;
 	private String pass;
 	private String nom;
+	private String photo;
 	
 	public String getEmail() {
 		return email;
@@ -23,6 +24,12 @@ public class Utilisateur{
 	}
 	public void setNom(String nom) {
 		this.nom = nom;
+	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 
 }
