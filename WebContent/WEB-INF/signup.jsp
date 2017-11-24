@@ -21,26 +21,47 @@
 <div class="reg-w3">
 <div class="w3layouts-main">
 	<h2>Inscription</h2>
-		<form action="Inscription" method="post" enctype="multipart/form-data">
-			<!--  
-			<input type="text" class="ggg" name="nom" placeholder="NOM" required="">
-			<input type="email" class="ggg" name="email" placeholder="E-MAIL" required="">
+		<form action="Inscription" method="post" enctype="multipart/form-data"> 
+			<input type="text" class="ggg" name="nom" 
+			 placeholder="NOM" required="" 
+			 value="<c:if test="${ !empty erreurs}"><c:out value="${ utilisateur.nom }"/>
+			 </c:if>" >
+			<c:if test="${ !empty erreurs.nom }">
+			<span class="erreur">${ erreurs.nom }</span>
+			</c:if>
+			<input type="email" class="ggg" name="email" placeholder="E-MAIL" required=""
+			value="<c:if test="${ !empty erreurs }"><c:out value="${ utilisateur.email }"/></c:if>">
+			<c:if test="${ !empty erreurs.email }">
+			<span class="erreur">${ erreurs.email }</span>
+			</c:if>
 			<input type="password" class="ggg" name="pass" placeholder="MOT DE PASSE" required="">
-			-->
+			<c:if test="${ !empty erreurs.pass }">
+			<span class="erreur">${ erreurs.pass }</span>
+			</c:if>
 			<label style="font-weight:normal !important;text-align:left;color:#f1aea2;" for="agree">
 			Photo</label>
 			<input type="file" class="ggg" name="photo" required="">
-			<!-- 
 			<br><br>
 			<h4><input type="checkbox" name="agree" id="agree"/>
 			<label style="font-weight:normal !important;position: relative;bottom: 15px;left:25px" for="agree">
 			J'accepte les conditions d'utilisation et la politique de confidentialité
 			</label></h4>
-			-->
+			<c:if test="${ !empty erreurs.agree }">
+			<span class="erreur">${ erreurs.agree }</span>
+			</c:if>
 				<div class="clearfix"></div>
 				<input type="submit" value="S'inscrire">
 		</form>
-		<p>Déjà inscrit?<a href="<c:url value="/Login"/>">Se connecter</a></p>
+		
+			<c:choose>
+				<c:when test="${ !empty message }">
+					<p style="color:#b6f7b6 !important;">${ message }<a href="<c:url value="/Login"/>">Se connecter</a></p>
+				</c:when>
+				<c:otherwise>
+					<p>Déjà inscrit?<a href="<c:url value="/Login"/>">Se connecter</a></p>
+				</c:otherwise>
+			</c:choose>
+		
 </div>
 </div>
 <script src="js/bootstrap.js"></script>

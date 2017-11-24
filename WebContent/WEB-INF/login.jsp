@@ -24,7 +24,7 @@
 		<form action="Login" method="post">
 			<input type="email" value="<c:choose>
 			<c:when test="${ !empty email }">${ email }</c:when>
-			<c:otherwise>${ utilisateur.email }</c:otherwise>
+			<c:otherwise><c:out value="${ utilisateur.email }"/></c:otherwise>
 			</c:choose>" 
 			class="ggg" name="email" placeholder="E-MAIL" required>
 			<c:if test="${ !empty form.erreurs.email }">

@@ -1,19 +1,16 @@
 package com.exos.servlets;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+
+
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
+import com.exos.bdd.Membre;
 import com.exos.beans.Utilisateur;
-import com.exos.forms.InscriptionForm;
 
 /**
  * Servlet implementation class Inscription
@@ -55,11 +52,22 @@ public class Inscription extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-        InscriptionForm form=new InscriptionForm();
-        Utilisateur utilisateur=form.envoiPhoto(request);
-		
 
-        request.setAttribute("utilisateur", utilisateur);
+		
+		Membre membre=new Membre();
+		Utilisateur utilisateur=membre.addMembre(request);
+		
+		if(!membre.getErreurs().isEmpty())
+		{
+			request.setAttribute("erreurs", membre.getErreurs());
+			request.setAttribute("utilisateur", utilisateur);
+			
+		}
+		else
+		{
+			request.setAttribute("message","Inscription réussie !");
+		}
+      
         
 		this.getServletContext().getRequestDispatcher("/WEB-INF/signup.jsp").forward(request, response);
 
