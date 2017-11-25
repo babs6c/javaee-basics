@@ -51,6 +51,12 @@ public class FiltreConnexion implements Filter {
 	    HttpSession session = req.getSession();
 	    String url = req.getServletPath();
 	    
+	    /*Si la page demandée fait partie des URL autorisées , est un fichier
+	     Css,img,js,font ou si l'utilisateur qui demande la page est connecté ,aller
+	     directement au niveau du servlet correspondant .... Sinon on redirige vers
+	     la page de connexion
+	     */
+	    
 		if(urlList.contains(url) || url.startsWith("/css/")
                 || url.startsWith("/js/") || url.startsWith("/images/") ||
                 url.startsWith("/fonts/") || session.getAttribute("utilisateur")!=null)
@@ -69,7 +75,8 @@ public class FiltreConnexion implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
+		
+		// Initialisation : recuperation des url autorisées
 		String urls = fConfig.getInitParameter("avoid-urls");
         urlList = Arrays.asList(urls.split(","));
 	}

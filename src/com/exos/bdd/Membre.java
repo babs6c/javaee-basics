@@ -8,6 +8,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +37,7 @@ public class Membre {
 		return erreurs;
 	}
 
-
+	//Chargement du driver - Connexion au serveur de BD
 	public void loadDatabase()
 	{
 		try {
@@ -52,6 +54,10 @@ public class Membre {
 		}
 	}
 	
+	/*Fonction principale d'ajout d'un membre
+	 Recuperation des parametres de requete ...Validation champs avec capture d'exceptions ..
+	 Traitement envoi fichier ...Ajout membre dans BD
+	 */
 	public Utilisateur addMembre(HttpServletRequest request)
 	{
 		String nom=request.getParameter("nom");
@@ -59,15 +65,17 @@ public class Membre {
 		String pass=request.getParameter("pass");
 		String agree=request.getParameter("agree");
 		
-		try {
-			part=request.getPart("photo");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ServletException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
+			try {
+				part=request.getPart("photo");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ServletException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		
 		
 		
 		try 
@@ -107,15 +115,14 @@ public class Membre {
 		}
 		
 		Utilisateur utilisateur=new Utilisateur();
+		utilisateur.setNom(nom);
+		utilisateur.setEmail(email);
+		utilisateur.setPass(hasherEnMD5(pass));
 		
 		
 		if(erreurs.isEmpty())
 		{
-			
 			traitementFichier(part,utilisateur);
-			utilisateur.setNom(nom);
-			utilisateur.setPass(pass);
-			utilisateur.setEmail(email);
 			addMemberInDb(utilisateur) ;
 		}
 		
@@ -125,6 +132,7 @@ public class Membre {
 		
 	}
 	
+	//Ajout d'un membre dans la BD
 	public void addMemberInDb(Utilisateur utilisateur)
 	{
 		loadDatabase();
@@ -190,6 +198,8 @@ public class Membre {
         }
     }
     
+    
+    //Traitement du fichier
     private void traitementFichier(Part part,Utilisateur utilisateur)
     {
     	// On vérifie qu'on a bien reçu un fichier
@@ -198,7 +208,6 @@ public class Membre {
     			// Si on a bien un fichier
     			if (nomFichier != null && !nomFichier.isEmpty()) 
     			{
-    				String nomChamp = part.getName();
     				// Corrige un bug du fonctionnement d'Internet Explorer
     				nomFichier = nomFichier.substring(nomFichier.lastIndexOf('/') + 1).substring(nomFichier.lastIndexOf('\\') + 1);
     				utilisateur.setPhoto(REPERTOIRE_PERMANENT+nomFichier);
@@ -213,6 +222,7 @@ public class Membre {
     	
     }
     
+    //Ecris le fichier dans un repertoire permanent du disque
     private void ecrireFichier( Part part, String nomFichier, String chemin ) throws IOException {
         BufferedInputStream entree = null;
         BufferedOutputStream sortie = null;
@@ -237,6 +247,7 @@ public class Membre {
         }
     }
 	
+    //Retourne le nom du fichier
 	 private static String getNomFichier( Part part ) {
 	        for ( String contentDisposition : part.getHeader( "content-disposition" ).split( ";" ) ) {
 	            if ( contentDisposition.trim().startsWith( "filename" ) ) {
@@ -246,4 +257,34 @@ public class Membre {
 	        return null;
 	    }  
 	
+	 //Hash du mot de passe en MD5
+	 private static String hasherEnMD5(String password)
+	    {
+	        byte[] uniqueKey = password.getBytes();
+	        byte[] hash      = null;
+
+	        try
+	        {
+	            hash = MessageDigest.getInstance("MD5").digest(uniqueKey);
+	        }
+	        catch (NoSuchAlgorithmException e)
+	        {
+	            throw new Error("No MD5 support in this VM.");
+	        }
+
+	        StringBuilder hashString = new StringBuilder();
+	        for (int i = 0; i < hash.length; i++)
+	        {
+	            String hex = Integer.toHexString(hash[i]);
+	            if (hex.length() == 1)
+	            {
+	                hashString.append('0');
+	                hashString.append(hex.charAt(hex.length() - 1));
+	            }
+	            else
+	                hashString.append(hex.substring(hex.length() - 2));
+	        }
+	        return hashString.toString();
+	    }
+
 }
