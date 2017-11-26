@@ -22,24 +22,21 @@
 <div class="w3layouts-main">
 	<h2>Se connecter</h2>
 		<form action="Login" method="post">
-			<input type="email" value="<c:choose>
-			<c:when test="${ !empty email }">${ email }</c:when>
-			<c:otherwise><c:out value="${ utilisateur.email }"/></c:otherwise>
-			</c:choose>" 
+			<input type="email" value="<c:choose><c:when test="${ !empty cookie_email }">${ cookie_email }</c:when><c:otherwise><c:out value="${ membre.erreurs.emailvalue }"/></c:otherwise></c:choose>" 
 			class="ggg" name="email" placeholder="E-MAIL" required>
-			<c:if test="${ !empty form.erreurs.email }">
-			<span class="erreur">${ form.erreurs.email }</span>
+			<c:if test="${ !empty membre.erreurs.email }">
+			<span class="erreur">${ membre.erreurs.email }</span>
 			</c:if>
 			<input type="password" class="ggg" name="pass" placeholder="MOT DE PASSE" required>
-			<c:if test="${ !empty form.erreurs.pass }">
-			<span class="erreur">${ form.erreurs.pass }</span>
+			<c:if test="${ !empty membre.erreurs.pass }">
+			<span class="erreur">${ membre.erreurs.pass }</span>
 			</c:if>
 			<!-- <span><input type="checkbox" />Remember Me</span>
 			<h6><a href="#">Forgot Password?</a></h6> -->
 				<div class="clearfix"></div>
 				<input type="submit" value="Connexion" name="login">
-				<c:if test="${ !empty form.erreurs.credentials }">
-				<span class="erreur" style="text-align:center;">${ form.erreurs.credentials }</span>
+				<c:if test="${ !empty membre.erreurs.credentials }">
+				<span class="erreur" style="text-align:center;">${ membre.erreurs.credentials }</span>
 				</c:if>
 		</form>
 		

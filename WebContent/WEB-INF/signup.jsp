@@ -22,25 +22,23 @@
 <div class="w3layouts-main">
 	<h2>Inscription</h2>
 		<form action="Inscription" method="post" enctype="multipart/form-data"> 
-			<input type="text" class="ggg" name="nom" 
-			 placeholder="NOM" required="" 
-			 value="<c:if test="${ !empty erreurs}"><c:out value="${ utilisateur.nom }"/>
-			 </c:if>" >
+			<input type="text" required="" class="ggg" name="nom" placeholder="NOM" 
+			value="<c:if test="${ !empty erreurs }"><c:out value="${ utilisateur.nom }"/></c:if>">
 			<c:if test="${ !empty erreurs.nom }">
 			<span class="erreur">${ erreurs.nom }</span>
 			</c:if>
-			<input type="email" class="ggg" name="email" placeholder="E-MAIL" required=""
+			<input type="email" required="" class="ggg" name="email" placeholder="E-MAIL" 
 			value="<c:if test="${ !empty erreurs }"><c:out value="${ utilisateur.email }"/></c:if>">
 			<c:if test="${ !empty erreurs.email }">
 			<span class="erreur">${ erreurs.email }</span>
 			</c:if>
-			<input type="password" class="ggg" name="pass" placeholder="MOT DE PASSE" required="">
+			<input type="password" required="" class="ggg" name="pass" placeholder="MOT DE PASSE" >
 			<c:if test="${ !empty erreurs.pass }">
 			<span class="erreur">${ erreurs.pass }</span>
 			</c:if>
 			<label style="font-weight:normal !important;text-align:left;color:#f1aea2;" for="agree">
 			Photo</label>
-			<input type="file" class="ggg" name="photo" required="">
+			<input type="file" required="" class="ggg" name="photo" >
 			<br><br>
 			<h4><input type="checkbox" name="agree" id="agree"/>
 			<label style="font-weight:normal !important;position: relative;bottom: 15px;left:25px" for="agree">

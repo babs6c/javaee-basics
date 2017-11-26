@@ -225,7 +225,7 @@
         <li class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                 <img alt="" src="images/2.png">
-                <span class="username"><c:out value="${ sessionScope.utilisateur.email }"></c:out></span>
+                <span class="username"><c:out value="${ sessionScope.email }"></c:out></span>
                 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu extended logout">

@@ -2,6 +2,7 @@ package com.exos.bdd;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,7 +12,9 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -28,6 +31,8 @@ public class Membre {
 	private Map <String,String> erreurs=new HashMap<String,String>();
 
 	private Connection connexion=null;
+	private PreparedStatement preparedStatement=null;
+	private ResultSet resultat=null;
 	
 	private Part part;
 	private static final int TAILLE_TAMPON=10240;
@@ -65,6 +70,9 @@ public class Membre {
 		String pass=request.getParameter("pass");
 		String agree=request.getParameter("agree");
 		
+	
+		Utilisateur utilisateur=new Utilisateur();
+		
 		
 			try {
 				part=request.getPart("photo");
@@ -76,8 +84,6 @@ public class Membre {
 				e1.printStackTrace();
 			}
 		
-		
-		
 		try 
 		{
 			validationNom(nom);
@@ -86,6 +92,58 @@ public class Membre {
 		{
 			erreurs.put("nom", e.getMessage());
 		}
+		utilisateur.setNom(nom.trim());
+		
+		
+		try 
+		{
+			validationEmail(email);
+		}
+		catch(Exception e)
+		{
+			erreurs.put("email", e.getMessage());
+		}
+		utilisateur.setEmail(email.trim());
+		
+		try 
+		{
+			validationMotDePasse(pass);
+		}
+		catch(Exception e)
+		{
+			erreurs.put("pass", e.getMessage());
+		}
+		utilisateur.setPass(hasherEnMD5(pass.trim()));
+		
+		try 
+		{
+			validationAgree(agree);
+		}
+		catch(Exception e)
+		{
+			erreurs.put("agree", e.getMessage());
+		}
+		
+		
+		if(erreurs.isEmpty())
+		{
+			traitementFichier(part,utilisateur);
+			addMemberInDb(utilisateur) ;
+		}
+		
+		
+		return utilisateur;
+		
+	}
+	
+	
+	public List<Utilisateur>connexion(HttpServletRequest request)
+	{
+		List<Utilisateur> utilisateurs=new ArrayList<Utilisateur>();
+		
+		String email=request.getParameter("email");
+		String pass=request.getParameter("pass");
+		
 		
 		try 
 		{
@@ -98,45 +156,79 @@ public class Membre {
 		
 		try 
 		{
-			validationMotDePasse(pass);
+			validationMotDePasseConnexion(pass);
 		}
 		catch(Exception e)
 		{
 			erreurs.put("pass", e.getMessage());
 		}
-		
-		try 
-		{
-			validationAgree(agree);
-		}
-		catch(Exception e)
-		{
-			erreurs.put("agree", e.getMessage());
-		}
-		
-		Utilisateur utilisateur=new Utilisateur();
-		utilisateur.setNom(nom);
-		utilisateur.setEmail(email);
-		utilisateur.setPass(hasherEnMD5(pass));
-		
+
 		
 		if(erreurs.isEmpty())
 		{
-			traitementFichier(part,utilisateur);
-			addMemberInDb(utilisateur) ;
+			loadDatabase();
+			try {
+				preparedStatement=connexion.prepareStatement("select * from membres where email=? and pass=?");
+				preparedStatement.setString(1,email);
+				preparedStatement.setString(2,hasherEnMD5(pass.trim()));
+				resultat=preparedStatement.executeQuery();
+				
+				
+				
+				/*if (!resultat.next() ) 
+				{
+					erreurs.put("credentials","Verifiez vos saisies !");
+					erreurs.put("emailvalue", email);
+				} 
+				else
+				{*/
+					int i=0;
+					while(resultat.next())
+					{
+						String mail=resultat.getString("email");
+						String nom=resultat.getString("nom");
+						String photo=resultat.getString("photo");
+						
+						Utilisateur user=new Utilisateur();
+						user.setEmail(mail);
+						user.setNom(nom);
+						user.setPhoto(photo);
+						utilisateurs.add(user);
+						i++;
+					}
+					if(i==0)
+					{
+						erreurs.put("credentials","Verifiez vos saisies !");
+						erreurs.put("emailvalue", email);
+					}
+				//} 
+			}
+			catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally {
+	            // Fermeture de la connexion
+	            try {
+	                if (connexion != null)
+	                    connexion.close();
+	            } catch (SQLException ignore) {
+	            }
+	        }
 		}
 		
 		
 		
-		return utilisateur;
-		
+		return utilisateurs;
 	}
+	
+	
 	
 	//Ajout d'un membre dans la BD
 	public void addMemberInDb(Utilisateur utilisateur)
 	{
 		loadDatabase();
-		PreparedStatement preparedStatement;
+		
 		try {
 			preparedStatement = connexion.prepareStatement
 					("INSERT INTO membres(nom, email,pass,photo) VALUES(?, ?, ?, ?);");
@@ -163,7 +255,11 @@ public class Membre {
 	
 	private void validationEmail( String email ) throws Exception 
     {
-        if ( email != null && !email.matches( "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)" ) ) {
+		if ( email.trim().equals(""))
+        {
+        throw new Exception( "Merci de saisir une adresse mail." );
+        }
+		else if ( email != null && !email.matches( "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)" ) ) {
             throw new Exception( "Merci de saisir une adresse mail valide." );
         }
     }
@@ -173,20 +269,36 @@ public class Membre {
     {
         if ( pass != null ) 
         {
-            if ( pass.length() < 7 ) {
+        		if ( pass.trim().equals(""))
+            {
+            throw new Exception( "Merci de saisir votre mot de passe." );
+            }
+        		
+        		else if ( pass.length() < 7 ) {
                 throw new Exception( "Le mot de passe doit contenir au moins 7 caractères." );
             }
-        } else 
-        {
+        }
+    }
+    
+    private void validationMotDePasseConnexion( String pass ) throws Exception 
+    {
+        if ( pass != null ) 
+        {	
+        		if ( pass.trim().equals(""))
+            {
             throw new Exception( "Merci de saisir votre mot de passe." );
+            }
         }
     }
     
     private void validationNom( String nom ) throws Exception 
     {
-        if ( nom == null )
+        if ( nom !=null )
         {
+        		if ( nom.trim().equals(""))
+            {
             throw new Exception( "Merci de saisir votre nom." );
+            }
         }
     }
     
@@ -197,8 +309,8 @@ public class Membre {
             throw new Exception( "Veuilez accepter les termes d'utilisation pour continuer la procédure d'inscription." );
         }
     }
-    
-    
+   
+   
     //Traitement du fichier
     private void traitementFichier(Part part,Utilisateur utilisateur)
     {

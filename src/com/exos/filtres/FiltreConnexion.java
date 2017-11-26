@@ -59,7 +59,7 @@ public class FiltreConnexion implements Filter {
 	    
 		if(urlList.contains(url) || url.startsWith("/css/")
                 || url.startsWith("/js/") || url.startsWith("/images/") ||
-                url.startsWith("/fonts/") || session.getAttribute("utilisateur")!=null)
+                url.startsWith("/fonts/") || session.getAttribute("email")!=null)
 		{
 			// pass the request along the filter chain
 			 chain.doFilter(req, res); 

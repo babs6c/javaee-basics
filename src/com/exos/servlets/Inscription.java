@@ -35,7 +35,7 @@ public class Inscription extends HttpServlet {
 		// TODO Auto-generated method stub
 	HttpSession session=request.getSession();
 		
-		if(session.getAttribute("utilisateur")==null)
+		if(session.getAttribute("email")==null)
 		{
 			  
 			this.getServletContext().getRequestDispatcher("/WEB-INF/signup.jsp").forward(request, response);
