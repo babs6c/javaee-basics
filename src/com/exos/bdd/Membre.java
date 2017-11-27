@@ -173,15 +173,6 @@ public class Membre {
 				preparedStatement.setString(2,hasherEnMD5(pass.trim()));
 				resultat=preparedStatement.executeQuery();
 				
-				
-				
-				/*if (!resultat.next() ) 
-				{
-					erreurs.put("credentials","Verifiez vos saisies !");
-					erreurs.put("emailvalue", email);
-				} 
-				else
-				{*/
 					int i=0;
 					while(resultat.next())
 					{
@@ -201,7 +192,7 @@ public class Membre {
 						erreurs.put("credentials","Verifiez vos saisies !");
 						erreurs.put("emailvalue", email);
 					}
-				//} 
+				
 			}
 			catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -212,6 +203,8 @@ public class Membre {
 	            try {
 	                if (connexion != null)
 	                    connexion.close();
+	                if (resultat != null)
+	                    resultat.close();
 	            } catch (SQLException ignore) {
 	            }
 	        }
