@@ -70,9 +70,7 @@ public class Membre {
 		String pass=request.getParameter("pass");
 		String agree=request.getParameter("agree");
 		
-	
 		Utilisateur utilisateur=new Utilisateur();
-		
 		
 			try {
 				part=request.getPart("photo");
@@ -224,7 +222,7 @@ public class Membre {
 		
 		try {
 			preparedStatement = connexion.prepareStatement
-					("INSERT INTO membres(nom, email,pass,photo) VALUES(?, ?, ?, ?);");
+					("INSERT INTO membres(nom, email,pass,photo,date_inscription) VALUES(?, ?, ?, ?,NOW());");
 		 
         preparedStatement.setString(1, utilisateur.getNom());
         preparedStatement.setString(2, utilisateur.getEmail());

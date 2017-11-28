@@ -1,11 +1,15 @@
 package com.exos.beans;
 
+import java.sql.Timestamp;
+
 public class Utilisateur{
 
+	private Integer id;
 	private String email;
 	private String pass;
 	private String nom;
 	private String photo;
+	private Timestamp date_inscription;
 	
 	public String getEmail() {
 		return email;
@@ -30,6 +34,18 @@ public class Utilisateur{
 	}
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Timestamp getDate_inscription() {
+		return date_inscription;
+	}
+	public void setDate_inscription(Timestamp date_inscription) {
+		this.date_inscription = date_inscription;
 	}
 
 }
