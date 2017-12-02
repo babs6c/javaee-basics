@@ -77,6 +77,7 @@ public class Login extends HttpServlet {
 			response.addCookie(cookiee);
 	    		HttpSession session=request.getSession();
 			session.setAttribute("email", utilisateurs.get(0).getEmail());
+			session.setAttribute("nom", utilisateurs.get(0).getNom());
 			response.sendRedirect(request.getContextPath() + "/Accueil");
 		}
 		

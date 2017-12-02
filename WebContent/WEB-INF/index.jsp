@@ -29,8 +29,8 @@
 <header class="header fixed-top clearfix">
 <!--logo start-->
 <div class="brand">
-    <a href="index.html" class="logo">
-        VISITORS
+    <a href="" class="logo">
+        <c:out value="${ sessionScope.nom }"></c:out>
     </a>
     <div class="sidebar-toggle-box">
         <div class="fa fa-bars"></div>
